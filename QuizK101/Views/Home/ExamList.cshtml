@@ -1,0 +1,12 @@
+﻿@model QuizK101.ViewModels.HomeVM
+@{
+    ViewBag.Title = "ExamList";
+}
+
+<h2>Exam List</h2>
+<ul class="list-group">
+    @foreach (var sub in Model.Exams)
+    {
+        <li class="list-group-item"><a href="@Url.Action("QuizInfo","Quiz",new { id=sub.ID})">@sub.Name | @sub.ExamTime</a> </li>
+    }
+</ul>

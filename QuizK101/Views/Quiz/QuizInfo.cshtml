@@ -1,0 +1,53 @@
+﻿@model QuizK101.ViewModels.HomeVM
+@{
+    ViewBag.Title = "QuizInfo";
+}
+
+<h2>QuizInfo</h2>
+
+
+<table class="table" style="margin:4em 0">
+    <tbody>
+        <tr>
+            <td>İmtahan adı</td>
+            <td>@Model.Exam.Name</td>
+        </tr>
+        <tr>
+            <td>İmtahan vaxtı</td>
+            <td>@Model.Exam.ExamTime</td>
+        </tr>
+        <tr>
+            <td>Sual sayı</td>
+            <td>50</td>
+        </tr>
+
+        <tr class="qStartEnd">
+            <td width="220px" style="font-weight:bold;color:red;">Suallar hansı aralıqdan düşsün</td>
+            <td style="vertical-align:middle;">
+                <input type="text" name="q_start" value="1" style="width:30px;">
+                <input type="number" name="q_end" value="@Model.Exam.Questions.Count()" max="@Model.Exam.Questions.Count()" style="width:50px;">
+                sual aralığından 50 sual
+            </td>
+        </tr>
+
+        <tr class="qIds" style="display: none;">
+            <td width="220px" style="font-weight:bold;color:red;">
+                Sualların sıra nömrələrini qeyd edin
+                (nümünə: 1,43,34,654)
+            </td>
+            <td style="vertical-align:middle;">
+                <input type="text" name="q_ids" value="" style="width:100px;">
+                nömrəli suallardan 50 sual
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <form method="post">
+                    <input type="hidden" name="ExamId" value="@Model.Exam" />
+                    <input class="btn btn-primary btn-lg" type="submit" value="Imtahana başla" />
+                </form>
+                @*<a class="btn btn-primary btn-lg" href="@Url.Action("StartExam","Quiz",new { ExamId=Model.Exam.ID})">İmtahana Başla</a>*@
+            </td>
+        </tr>
+    </tbody>
+</table>

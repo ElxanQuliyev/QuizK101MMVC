@@ -1,0 +1,15 @@
+﻿@model QuizK101.ViewModels.EndQuizVm
+@{
+    ViewBag.Title = "EndQuiz";
+}
+@if (Model != null)
+{
+    <span class="alert alert-success">Imtahan bitdi </span>
+    <h3>Siz @Model.Score bal topladınız</h3>
+}
+else
+{
+    <br />
+    <br />
+    <span class="alert alert-danger">Imtahan bitib!</span>
+}

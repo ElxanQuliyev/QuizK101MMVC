@@ -1,0 +1,16 @@
+﻿@model QuizK101.ViewModels.HomeVM
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>ASP.NET</h1>
+    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
+    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+</div>
+<ul class="list-group">
+    @foreach (var sub in Model.Subjects)
+    {
+        <li class="list-group-item"><a href="@Url.Action("ExamList","Home",new { id=sub.ID})">@sub.SubjectName | @sub.SubjectCode</a> </li>
+    }
+</ul>
