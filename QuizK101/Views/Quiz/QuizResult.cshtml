@@ -1,0 +1,12 @@
+﻿@model QuizK101.ViewModels.ResultQuizVM
+@{
+    ViewBag.Title = "QuizResult";
+}
+
+<h2>QuizResult</h2>
+<ul class="list-group list-group-flush">
+    @foreach (var item in Model.Quizzes)
+    {
+    <li class="list-group-item">(Exam Start : <a href="@Url.Action("QuizResultAnswer","Quiz",new { id=item.ExamID})">@item.Exam.Name  (@item.QuizStart.ToString("MM-dd-yyyy | HH:mm:ss"))  ~ </a>@item.Score bal </li>
+    }
+</ul>

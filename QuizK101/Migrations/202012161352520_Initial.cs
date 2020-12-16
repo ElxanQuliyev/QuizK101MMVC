@@ -68,7 +68,7 @@ namespace QuizK101.Migrations
                     {
                         ID = c.Int(nullable: false, identity: true),
                         ExamID = c.Int(),
-                        UserID = c.Int(nullable: false),
+                        UserID = c.String(maxLength: 128),
                         QuizStart = c.DateTime(nullable: false),
                         QuizEnd = c.DateTime(nullable: false),
                         QuizTime = c.Time(nullable: false, precision: 7),

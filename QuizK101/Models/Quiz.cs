@@ -19,7 +19,8 @@ namespace QuizK101.Models
 
         public int? ExamID { get; set; }
 
-        public int UserID { get; set; }
+        [StringLength(128)]
+        public string UserID { get; set; }
 
         public DateTime QuizStart { get; set; }
 

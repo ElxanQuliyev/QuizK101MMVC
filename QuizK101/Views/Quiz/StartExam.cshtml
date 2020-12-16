@@ -4,8 +4,17 @@
 }
 @if (Model != null && Model.Quiz != null && Model.Exam != null)
 {
+
+    if (!Model.Quiz.QuizActive)
+    {
+        <script>
+            window.history.pushState({}, document.title, "/" + "Quiz/StartExam");
+            window.history.replaceState({}, document.title, "/" + "Quiz/EndQuiz");
+        </script>
+    }
     <h2 class="text-center">@Model.Exam.Name</h2>
     <div id="AllQuestion">
+
         @{ Html.RenderAction("QuestionSlide");}
     </div>
     @*@(Model.CurrentQuestion == 0 ? "disabled" : "")*@
@@ -15,7 +24,7 @@
 
     <span id="time"></span>
     <br />
-    <a href="@Url.Action("EndQuiz","Quiz",new { quizId=Model.Quiz.ID})" class="btn btn-danger btn-lg">Imtahanı bitir</a>
+    <a href="@Url.Action("EndQuiz", "Quiz", new { quizId = Model.Quiz.ID })" class="btn btn-danger btn-lg">Imtahanı bitir</a>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
     <script>
@@ -46,7 +55,7 @@
 
         function ShowQuestion(examData) {
             $.ajax({
-                url: "@Url.Action("QuestionSLide", "Quiz", new { ExamId =  Model.Exam.ID})",
+                url: "@Url.Action("QuestionSLide", "Quiz", new { ExamId = Model.Exam.ID })",
                 data: {
                     skip: examData,
                     QuizId:'@Model.Quiz.ID'
@@ -70,18 +79,17 @@
             t = time;
             out = setTimeout("timer(t)", 1000);
             if (t <= 0) {
-                location.href = '@Url.Action("EndQuiz","Quiz",new { quizId=Model.Quiz.ID})';
+                location.href = '@Url.Action("EndQuiz", "Quiz", new { quizId = Model.Quiz.ID })';
             }
         }
 
         $(document).ready(function () {
             console.log()
             setTimeout(function () {
-                timer('@((Model.Quiz.QuizEnd-DateTime.Now).TotalHours*3600)')
+                timer('@((Model.Quiz.QuizEnd - DateTime.Now).TotalHours * 3600)')
             }, 0);
         })
     </script>
-
 }
 else
 {

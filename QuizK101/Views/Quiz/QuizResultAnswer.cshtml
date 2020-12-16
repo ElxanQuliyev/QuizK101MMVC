@@ -1,0 +1,25 @@
+﻿@model QuizK101.ViewModels.ResultQuizVM
+@{
+    ViewBag.Title = "QuizResultAnswer";
+}
+@{ 
+    int count = 1;
+}
+@foreach (var question in Model.Questions)
+{
+    <h4>@count) @question.Name</h4>
+    <div class="answer">
+        <ul class="list-group">
+            @foreach (var answer in question.Answers)
+            {
+                    int? a = question.MyAnswers.FirstOrDefault(x => x.AnswerID == answer.ID).ID;
+                <li class="list-group-item">
+                    <input  class="answerId" type="radio" name="answer" value="" />
+                    <span>@answer.Name</span>
+                </li>
+            }
+        </ul>
+    </div>
+    count++;
+}
+

@@ -176,9 +176,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202012150758598_Initial.cs" />
-    <Compile Include="Migrations\202012150758598_Initial.Designer.cs">
-      <DependentUpon>202012150758598_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\202012161352520_Initial.cs" />
+    <Compile Include="Migrations\202012161352520_Initial.Designer.cs">
+      <DependentUpon>202012161352520_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -201,6 +201,7 @@
     <Compile Include="ViewModels\HomeVM.cs" />
     <Compile Include="ViewModels\QuestionDto.cs" />
     <Compile Include="ViewModels\QuestionViewModel.cs" />
+    <Compile Include="ViewModels\ResultQuizVM.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -263,6 +264,8 @@
     <Content Include="Views\Quiz\StartExam.cshtml" />
     <Content Include="Views\Quiz\QuestionSlide.cshtml" />
     <Content Include="Views\Quiz\EndQuiz.cshtml" />
+    <Content Include="Views\Quiz\QuizResult.cshtml" />
+    <Content Include="Views\Quiz\QuizResultAnswer.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -281,8 +284,8 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202012150758598_Initial.resx">
-      <DependentUpon>202012150758598_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202012161352520_Initial.resx">
+      <DependentUpon>202012161352520_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

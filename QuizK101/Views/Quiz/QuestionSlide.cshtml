@@ -1,21 +1,28 @@
 ﻿@model QuizK101.ViewModels.QuestionViewModel
 @if (Model != null && Model.Exam.Questions.Count > 0 && Model.Exam != null)
 {
-
-    <h4>@(Model.CurrentQuestion+1)) @Model.Question.Name</h4>
-    <div class="answer">
-        <ul class="list-group">
-            @foreach (var answer in Model.Question.Answers)
-            {
-                <li class="list-group-item">
-                    <input @(Model.MyAnswerId != null ? Model.MyAnswerId.AnswerID == answer.ID ? "checked" : "" : "") onclick="myAynswerFunc(@Model.Question.ID,@answer.ID,@Model.Exam.ID,@Model.Quiz.ID)" class="answerId" type="radio" name="answer" value="@answer.ID-@Model.Question.ID" />
-                    <span>@answer.Name</span>
-                </li>
-            }
-        </ul>
-    </div>
+    if (!Model.Quiz.QuizActive)
+    {
+        <h4>@(Model.CurrentQuestion + 1)) @Model.Question.Name</h4>
+        <div class="answer">
+            <ul class="list-group">
+                @foreach (var answer in Model.Question.Answers)
+                {
+                    <li class="list-group-item">
+                        <input @(Model.MyAnswerId != null ? Model.MyAnswerId.AnswerID == answer.ID ? "checked" : "" : "") onclick="myAynswerFunc(@Model.Question.ID,@answer.ID,@Model.Exam.ID,@Model.Quiz.ID)" class="answerId" type="radio" name="answer" value="@answer.ID-@Model.Question.ID" />
+                        <span>@answer.Name</span>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+    else
+    {
+        <p class="alert alert-warning">Imtahan bitib</p>
+    }
 }
 else
 {
     <p class="alert alert-danger">Sual Tapılmadı</p>
 }
+

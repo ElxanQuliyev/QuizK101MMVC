@@ -17,5 +17,15 @@ namespace QuizK101
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
+        //protected void Application_PreRequestHandlerExecute(Object sender, EventArgs e)
+        //{
+        //    string currentUrl = HttpContext.Current.Request.Path.ToLower();
+        //    if (currentUrl.Contains("/quiz/StartExam"))
+        //    {
+        //        Response.Status = "301 Moved Permanently";
+        //        Response.AddHeader("Location", "/Quiz/EndQuiz");
+        //        Response.End();
+        //    }
+        //}
     }
 }

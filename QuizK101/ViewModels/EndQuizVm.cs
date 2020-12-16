@@ -8,6 +8,5 @@ namespace QuizK101.ViewModels
 {
     public class EndQuizVm
     {
-        public int Score { get; set; }
     }
 }

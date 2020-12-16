@@ -1,4 +1,6 @@
 ﻿using Microsoft.Ajax.Utilities;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using Newtonsoft.Json;
 using QuizK101.Models;
 using QuizK101.ViewModels;
@@ -13,12 +15,44 @@ using System.Web.Script.Serialization;
 
 namespace QuizK101.Controllers
 {
+    [Authorize]
     public class QuizController : Controller
     {
         ApplicationDbContext db = new ApplicationDbContext();
+        private ApplicationSignInManager _signInManager;
+        private ApplicationUserManager _userManager;
+
         public QuizController()
         {
         }
+        public QuizController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
+        {
+            UserManager = userManager;
+            SignInManager = signInManager;
+        }
+        public ApplicationSignInManager SignInManager
+        {
+            get
+            {
+                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+            }
+            private set
+            {
+                _signInManager = value;
+            }
+        }
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
+        
         // GET: Quiz
         public ActionResult QuizInfo(int? id)
         {
@@ -27,28 +61,18 @@ namespace QuizK101.Controllers
             vm.Exam = db.Exams.FirstOrDefault(e => e.ID == id);
             return View(vm);
         }
-        private int CreateQuiz(int exmId)
-        {
-            Quiz quiz = new Quiz();
-            quiz.ExamID = exmId;
-            quiz.UserID = 2;
-            quiz.QuizStart = DateTime.Now;
-            //TimeSpan time = new TimeSpan(2000, 0, 0, 0);
-            quiz.QuizEnd = DateTime.Now.AddHours(2);
-            db.Quizs.Add(quiz);
-            db.SaveChanges();
-            return quiz.ID;
-        }
         [HttpPost]
         public ActionResult QuizInfo(Exam exam)
         {
             int activeQuizId;
+            var userId = User.Identity.GetUserId();
+
             HomeVM vm = new HomeVM();
             if (exam == null) return HttpNotFound();
-            Quiz selectedQuiz= db.Quizs.Where(x => x.UserID == 2).FirstOrDefault(x=>x.ExamID==exam.ID);
+            Quiz selectedQuiz = db.Quizs.Where(x => x.UserID == userId).FirstOrDefault(x => x.ExamID == exam.ID);
             if (selectedQuiz == null)
             {
-                activeQuizId = CreateQuiz(exam.ID); 
+                activeQuizId = CreateQuiz(exam.ID);
             }
             else if (selectedQuiz.QuizEnd <= DateTime.Now)
             {
@@ -58,7 +82,39 @@ namespace QuizK101.Controllers
             {
                 activeQuizId = selectedQuiz.ID;
             }
-            return RedirectToAction("StartExam",new { quizId=activeQuizId,examId=exam.ID});
+            return RedirectToAction("StartExam", new { quizId = activeQuizId, examId = exam.ID });
+        }
+        private int CreateQuiz(int exmId)
+        {
+            Quiz quiz = new Quiz();
+            quiz.ExamID = exmId;
+            quiz.UserID = User.Identity.GetUserId();
+            quiz.QuizStart = DateTime.Now;
+            //TimeSpan time = new TimeSpan(2000, 0, 0, 0);
+            quiz.QuizEnd = DateTime.Now.AddHours(2);
+            db.Quizs.Add(quiz);
+            db.SaveChanges();
+            return quiz.ID;
+        }
+        
+        public ActionResult QuizResult()
+        {
+            var userId = User.Identity.GetUserId();
+           var myQuiz= db.Quizs.Where(x => x.UserID == userId && !x.QuizActive).ToList();
+            var quezVm = new ResultQuizVM()
+            {
+                Quizzes = myQuiz
+            };
+            return View(quezVm);
+        }
+        public ActionResult QuizResultAnswer(int? id)
+        {
+            if (id==null) return HttpNotFound();
+            ResultQuizVM quizVm = new ResultQuizVM()
+            {
+                Questions = db.Questions.Where(x => x.ExamID == id).ToList()
+            };
+            return View(quizVm);
         }
         public ActionResult StartExam(int? QuizId, int? examId)
         {
@@ -75,43 +131,46 @@ namespace QuizK101.Controllers
         public ActionResult EndQuiz(int? QuizId)
         {
             int score = 0;
-           Quiz qz= db.Quizs.FirstOrDefault(q => q.ID == QuizId);
-            if (qz == null) return HttpNotFound();
-            EndQuizVm vm = null;
-            if (!qz.QuizActive)
+            if (QuizId != null)
             {
-                List<MyAnswer> myAnswers = db.MyAnswers.Where(x => x.QuizID == QuizId).ToList();
-                foreach (var answ in myAnswers)
+                Quiz qz = db.Quizs.FirstOrDefault(q => q.ID == QuizId);
+                if (qz == null) return HttpNotFound();
+                ResultQuizVM vm = null;
+                if (!qz.QuizActive)
                 {
-                    if (answ.AnswerID == answ.Question.CorrectAnswerID)
+                    List<MyAnswer> myAnswers = db.MyAnswers.Where(x => x.QuizID == QuizId).ToList();
+                    foreach (var answ in myAnswers)
                     {
-                        score++;
+                        if (answ.AnswerID == answ.Question.CorrectAnswerID)
+                        {
+                            score++;
+                        }
                     }
+                    qz.Score = score;
+                    qz.QuizActive = false;
+                    qz.QuizEnd = DateTime.Now;
+                    db.SaveChanges();
+                    vm = new ResultQuizVM()
+                    {
+                        Score = (int)qz.Score
+                    };
                 }
-                qz.Score = score;
-                qz.QuizActive = false;
-                qz.QuizEnd = DateTime.Now;
-                db.SaveChanges();
-                vm = new EndQuizVm()
-                {
-                    Score = (int)qz.Score
-                };
+                return View(vm);
             }
-            
-            return View(vm);
-        }
+            return View();
 
+        }
         //[HttpPost]
         public ActionResult QuestionSlide(int? ExamId,int? QuizId, int? skip,int? answerId, int? questionId)
         {
             int chooseAnswerID;
             if (ExamId == null) return HttpNotFound();
-
+            if (QuizId == null) return HttpNotFound();
             skip = skip.HasValue ? skip.Value > 0 ? skip.Value : 0 : 0;
             QuestionViewModel vm = new QuestionViewModel();
             vm.Quiz = db.Quizs.FirstOrDefault(x => x.ID == QuizId);
+            
             vm.Exam = db.Exams.FirstOrDefault(x => x.ID == ExamId);
-                            
             vm.Question = db.Questions.Where(x => x.ExamID == ExamId)
                 .OrderBy(x => x.ID)
                 .Select(x => new QuestionDto()
